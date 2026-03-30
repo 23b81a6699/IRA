@@ -233,9 +233,16 @@ if st.session_state.page != "chatbot":
 
 
 def go_back():
+    protected = {"home", "chatbot", "history", "profile"}
     if st.session_state.nav_history:
-        st.session_state.page = st.session_state.nav_history.pop()
-        st.rerun()
+        prev = st.session_state.nav_history.pop()
+        if not st.session_state.user and prev in protected:
+            st.session_state.page = "landing"
+        else:
+            st.session_state.page = prev
+    else:
+        st.session_state.page = "landing"
+    st.rerun()
 
 def now_str():
     return datetime.now().strftime("%I:%M %p")
@@ -632,84 +639,98 @@ elif st.session_state.page == "login":
     st.markdown("<div class='acard'>", unsafe_allow_html=True)
     email    = st.text_input("Email address", placeholder="you@cvr.ac.in", key="li_e")
     password = st.text_input("Password", placeholder="Enter your password", type="password", key="li_p")
+
+    if "li_error" not in st.session_state:
+        st.session_state.li_error = ""
+    if st.session_state.li_error:
+        st.markdown(f"<div class='al ae'>{st.session_state.li_error}</div>", unsafe_allow_html=True)
+
     st.markdown("<div class='bp' style='margin-top:0.4rem;'>", unsafe_allow_html=True)
-    # st.markdown("<div class='hidden-btn-marker'></div>", unsafe_allow_html=True)
-    if st.button("Sign in →", use_container_width=True, key="li_signin_hidden"):
+    if st.button("Sign in →", use_container_width=True, key="li_signin"):
         if email and password:
+            st.session_state.li_error = ""
             real_name = st.session_state.users_db.get(email, email.split("@")[0].capitalize())
             st.session_state.user = {"email": email, "full_name": real_name}
             go("home")
         else:
-            st.markdown("<div class='al ae'>Please fill in all fields.</div>", unsafe_allow_html=True)
-    st.markdown("""
-    <div style="cursor:pointer; padding:0.75rem; border-radius:10px; background:linear-gradient(135deg,#00d4aa,#0099aa); color:#070d1a; 
-      text-align:center; font-weight:600; font-size:0.88rem; letter-spacing:0.01em; box-shadow:0 4px 20px rgba(0,212,170,0.22);" 
-      onclick="document.querySelectorAll('button').forEach(b => { if(b.innerText.includes('Sign in →')) b.click(); })">Sign in →</div>
-    """, unsafe_allow_html=True)
-    st.markdown("</div><div class='divl'>No Account?</div><div class='bg'>", unsafe_allow_html=True)
-    # st.markdown("<div class='hidden-btn-marker'></div>", unsafe_allow_html=True)
-    st.markdown("</div><div class='divl'>no account?</div><div class='bg'>", unsafe_allow_html=True)
-    if st.button("Create account"):
+            st.session_state.li_error = "Please fill in all fields."
+            st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)  # closes bp
+
+    st.markdown("</div>", unsafe_allow_html=True)  # closes acard
+
+    st.markdown("<div class='divl'>No account?</div>", unsafe_allow_html=True)
+
+    st.markdown("<div class='bg'>", unsafe_allow_html=True)
+    if st.button("Create account", use_container_width=True, key="li_signup"):
         go("signup")
-    st.markdown("</div></div>", unsafe_allow_html=True)
-    st.markdown("<div class='bback' style='margin-top:0.6rem;'>", unsafe_allow_html=True)
-    st.markdown("</div></div></div></div>", unsafe_allow_html=True)
-    # if st.button("Create Account", use_container_width=True, key="li_signup_hidden"):
-    #     go("signup")
-    st.markdown("""
-    <div style="cursor:pointer; padding:0.72rem; border-radius:10px; background:transparent; color:var(--text2); border:1px solid rgba(255,255,255,0.1);
-      text-align:center; font-weight:600; font-size:0.88rem; letter-spacing:0.01em;" 
-      onclick="document.querySelectorAll('button').forEach(b => { if(b.innerText.includes('Create Account') && b.key==='li_signup_hidden') b.click(); })">Create Account</div>
-    """, unsafe_allow_html=True)
-    st.markdown("</div></div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)  # closes bg
+
+    st.markdown("</div>", unsafe_allow_html=True)  # closes outer wrapper
 
 # ══════════════════════════════════════════════════════════════════
 # SIGNUP
 # ══════════════════════════════════════════════════════════════════
 elif st.session_state.page == "signup":
+
     page_hdr("CVR Assistant", "Ask anything about campus", back=True)
-    st.markdown("<div style='max-width:400px;margin:1.5rem auto 0;padding:0 1rem;'>", unsafe_allow_html=True)
+
+    st.markdown(
+        "<div style='max-width:400px;margin:1.5rem auto 0;padding:0 1rem;'>",
+        unsafe_allow_html=True
+    )
+
     st.markdown("""
-      <div style="text-align:center;margin-bottom:1.25rem;">
+    <div style="text-align:center;margin-bottom:1.25rem;">
         <div class="bico" style="width:50px;height:50px;border-radius:13px;font-size:17px;margin:0 auto 0.8rem;">IRA</div>
         <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;margin:0 0 0.2rem;">Create account</h2>
         <p style="font-size:0.82rem;color:var(--text2);">Join CVR AI Assistant</p>
-      </div>
+    </div>
     """, unsafe_allow_html=True)
+
     st.markdown("<div class='acard'>", unsafe_allow_html=True)
-    name     = st.text_input("Full Name", placeholder="Your full name", key="su_n")
-    email    = st.text_input("Email address", placeholder="you@cvr.ac.in", key="su_e")
+
+    name = st.text_input("Full Name", placeholder="Your full name", key="su_n")
+    email = st.text_input("Email address", placeholder="you@cvr.ac.in", key="su_e")
     password = st.text_input("Password", placeholder="Create a strong password", type="password", key="su_p")
-    st.markdown("<div class='bp' style='margin-top:0.4rem;'>", unsafe_allow_html=True)
-    st.markdown("<div class='hidden-btn-marker'></div>", unsafe_allow_html=True)
-    if st.button("Create account →", use_container_width=True, key="su_create_hidden"):
+
+    if "su_error" not in st.session_state:
+        st.session_state.su_error = ""
+    if "su_success" not in st.session_state:
+        st.session_state.su_success = ""
+
+    if st.session_state.su_error:
+        st.markdown(f"<div class='al ae'>{st.session_state.su_error}</div>", unsafe_allow_html=True)
+    if st.session_state.su_success:
+        st.markdown(f"<div class='al ao'>{st.session_state.su_success}</div>", unsafe_allow_html=True)
+
+    if st.button("Create account →", use_container_width=True, key="btn_signup"):
         if name and email and password:
-            st.markdown("<div class='al ao'>Account created! Signing you in…</div>", unsafe_allow_html=True)
             st.session_state.users_db[email] = name
             st.session_state.user = {"email": email, "full_name": name}
+            st.session_state.su_success = "Account created! Signing you in…"
+            st.session_state.su_error = ""
             go("home")
         else:
-            st.markdown("<div class='al ae'>Please fill in all fields.</div>", unsafe_allow_html=True)
-    st.markdown("""
-    <div style="cursor:pointer; padding:0.75rem; border-radius:10px; background:linear-gradient(135deg,#00d4aa,#0099aa); color:#070d1a; 
-      text-align:center; font-weight:600; font-size:0.88rem; letter-spacing:0.01em; box-shadow:0 4px 20px rgba(0,212,170,0.22);" 
-      onclick="document.querySelectorAll('button').forEach(b => { if(b.innerText.includes('Create account →')) b.click(); })">Create account →</div>
-    """, unsafe_allow_html=True)
-    st.markdown("</div><div class='divl'>have an account?</div><div class='bg'>", unsafe_allow_html=True)
-    st.markdown("<div class='hidden-btn-marker'></div>", unsafe_allow_html=True)
-    if st.button("Sign in"):
+            st.session_state.su_error = "Please fill in all fields."
+            st.session_state.su_success = ""
+
+    st.markdown("</div>", unsafe_allow_html=True)  # ← closes acard
+
+    # ↓ These are now correctly OUTSIDE the card
+    st.markdown("<div class='divl'>Already have an account?</div>", unsafe_allow_html=True)
+
+    if st.button("Sign in", use_container_width=True, key="btn_signin"):
         go("login")
-    st.markdown("""
-    <div style="cursor:pointer; padding:0.72rem; border-radius:10px; background:transparent; color:var(--text2); border:1px solid rgba(255,255,255,0.1);
-      text-align:center; font-weight:600; font-size:0.88rem; letter-spacing:0.01em;" 
-      onclick="document.querySelectorAll('button').forEach(b => { if(b.innerText.includes('Sign in') && b.key==='su_signin_hidden') b.click(); })">Sign in</div>
-    """, unsafe_allow_html=True)
-    st.markdown("</div></div>", unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)  # ← closes outer wrapper
 
 # ══════════════════════════════════════════════════════════════════
 # HOME
 # ══════════════════════════════════════════════════════════════════
 elif st.session_state.page == "home":
+    if not st.session_state.user:
+        go("landing")
     user  = st.session_state.user
     name  = user["full_name"]
     today = datetime.now().strftime("%A, %d %B %Y")
@@ -757,6 +778,8 @@ elif st.session_state.page == "home":
 # CHATBOT
 # ══════════════════════════════════════════════════════════════════
 elif st.session_state.page == "chatbot":
+    if not st.session_state.user:
+        go("landing")
     user = st.session_state.user
     page_hdr("CVR Assistant", "Ask anything about campus", back=True)
     
@@ -948,6 +971,8 @@ header[data-testid="stHeader"] { display: none !important; }
 # HISTORY
 # ══════════════════════════════════════════════════════════════════
 elif st.session_state.page == "history":
+    if not st.session_state.user:
+        go("landing")
     msgs  = st.session_state.messages
     count = len(msgs)
     user  = st.session_state.user
@@ -1036,6 +1061,8 @@ elif st.session_state.page == "history":
 # PROFILE
 # ══════════════════════════════════════════════════════════════════
 elif st.session_state.page == "profile":
+    if not st.session_state.user:
+        go("landing")
     user = st.session_state.user
     name = user["full_name"] if user else ""
     email = user.get("email", "") if user else ""
@@ -1074,22 +1101,9 @@ elif st.session_state.page == "profile":
     <div class="psu">{email}</div>
     <div class="pbdg">ID: {roll}</div>
     
-    <div class="stats-grid">
-      <div class="stat-box">
-        <div class="slbl">Current GPA <span class="sico">📊</span></div>
-        <div class="sval">8.74</div>
-      </div>
-      <div class="stat-box">
-        <div class="slbl">Attendance <span class="sico">📅</span></div>
-        <div class="sval" style="color:var(--teal);">92.5%</div>
-      </div>
-    </div>
-    
     <div style="margin-top:1.5rem; background:var(--bg3); border:1px solid var(--bdr); border-radius:14px; padding:0.5rem 1.25rem;">
       <div class="inf-row"><span class="inf-l">Course</span><span class="inf-v">B.Tech - AIML</span></div>
       <div class="inf-row"><span class="inf-l">Year / Sem</span><span class="inf-v">3rd Year </span></div>
-      <div class="inf-row"><span class="inf-l">Hostel details</span><span class="inf-v">Block A, Room 214</span></div>
-      <div class="inf-row"><span class="inf-l">Transport Route</span><span class="inf-v">Route 14 (LB Nagar)</span></div>
     </div>
   </div>
 </div>
