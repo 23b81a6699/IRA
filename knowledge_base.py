@@ -237,13 +237,13 @@ CVR_KNOWLEDGE = [
         "title": "Fee Structure at CVR College",
         "content": (
             "CVR fee structure (regulated by TSFRC): "
-            "B.Tech tuition fee (convener quota): Rs 45,000 to Rs 90,000 per year depending on branch. "
-            "CSE, ECE, AI&ML, Data Science have higher fees around Rs 70,000–90,000 per year. "
+            "B.Tech tuition fee (convener quota): Rs 1,00,000 to Rs 1,50,000. per year depending on branch. "
+            "CSE, ECE, AI&ML, Data Science have higher fees around Rs 1,00,000–1,20,000 per year. "
             "Examination fee: approximately Rs 5,000 per year. "
-            "Transport fee: Rs 12,000 to Rs 25,000 per year based on distance. "
-            "Total annual cost for day scholar: Rs 70,000 to Rs 1,20,000. "
+            "Transport fee:Upto Rs 40,000 per year based on distance. "
+            "Total annual cost for day scholar: Rs 1,00,000 to Rs 1,50,000. "
             "Management quota fees: Rs 1,00,000 to Rs 1,50,000 per year. "
-            "Hostel fee: Rs 60,000 to Rs 90,000 per year (accommodation + 3 meals per day). "
+            "Hostel fee: Rs 1,00,000 to Rs 1,35,000 per year (accommodation + 3 meals per day). "
             "Total for hosteller: Rs 1,50,000 to Rs 2,50,000 per year."
         ),
     },
