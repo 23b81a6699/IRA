@@ -704,13 +704,19 @@ elif st.session_state.page == "signup":
     if st.session_state.su_success:
         st.markdown(f"<div class='al ao'>{st.session_state.su_success}</div>", unsafe_allow_html=True)
 
+    ALLOWED_DOMAINS = ("@gmail.com", "@yahoo.com", "@cvr.ac.in")
+
     if st.button("Create account →", use_container_width=True, key="btn_signup"):
         if name and email and password:
-            st.session_state.users_db[email] = name
-            st.session_state.user = {"email": email, "full_name": name}
-            st.session_state.su_success = "Account created! Signing you in…"
-            st.session_state.su_error = ""
-            go("home")
+            if not email.endswith(ALLOWED_DOMAINS):
+                st.session_state.su_error = "Only @gmail.com, @yahoo.com, or @cvr.ac.in emails are allowed."
+                st.session_state.su_success = ""
+            else:
+                st.session_state.users_db[email] = name
+                st.session_state.user = {"email": email, "full_name": name}
+                st.session_state.su_success = "Account created! Signing you in…"
+                st.session_state.su_error = ""
+                go("home")
         else:
             st.session_state.su_error = "Please fill in all fields."
             st.session_state.su_success = ""

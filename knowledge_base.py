@@ -289,7 +289,7 @@ CVR_KNOWLEDGE = [
             "Well-furnished rooms. Dedicated mess with vegetarian and non-vegetarian options. "
             "Female warden and support staff available 24x7. "
             "Wi-Fi internet. Generator backup. Indoor games, TV room, reading room. "
-            "Girls hostel fee: approximately Rs 60,000 to Rs 90,000 per year. "
+            "Girls hostel fee: approximately Rs 1,45,000 per year. "
             "Strict entry/exit protocol ensures safety of female students."
         ),
     },
